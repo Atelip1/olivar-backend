@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OlivarBackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5e5d76004dc4197d9f4ab135af2b1d2220100368")]
 [assembly: System.Reflection.AssemblyProductAttribute("OlivarBackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OlivarBackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
