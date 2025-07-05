@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 COPY *.sln .
-COPY . .   # Copia todo si el .csproj está en la raíz
+COPY . .
 
 RUN dotnet restore
 RUN dotnet publish -c Release -o /app/publish
