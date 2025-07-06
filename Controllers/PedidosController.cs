@@ -137,5 +137,32 @@ namespace OlivarBackend.Controllers
 
             return NoContent();
         }
+        // ✅ GET: /api/Pedidos/usuario/{usuarioId}
+        [HttpGet("usuario/{usuarioId}")]
+        public async Task<ActionResult<IEnumerable<PedidoDto>>> GetPedidosPorUsuario(int usuarioId)
+        {
+            var pedidos = await _context.Pedidos
+                .Include(p => p.Usuario)
+                .Where(p => p.UsuarioId == usuarioId)
+                .OrderByDescending(p => p.Fecha)
+                .Select(p => new PedidoDto
+                {
+                    PedidoId = p.PedidoId,
+                    UsuarioId = p.UsuarioId,
+                    Fecha = p.Fecha,
+                    Estado = p.Estado,
+                    MetodoPago = p.MetodoPago,
+                    MetodoEntrega = p.MetodoEntrega,
+                    CuponId = p.CuponId,
+                    DescuentoAplicado = p.DescuentoAplicado,
+                    Total = p.Total,
+                    SucursalId = p.SucursalId,
+                    NombreUsuario = p.Usuario.Nombre
+                })
+                .ToListAsync();
+
+            return Ok(pedidos);
+        }
+
     }
 }
