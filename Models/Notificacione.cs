@@ -17,5 +17,5 @@ public partial class Notificacione
 
     public bool? Leida { get; set; }
 
-    public virtual Usuario Usuario { get; set; } = null!;
+    public virtual Usuario? Usuario { get; set; }
 }
