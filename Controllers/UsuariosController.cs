@@ -53,13 +53,16 @@ namespace OlivarBackend.Controllers
                 if (existe)
                     return Conflict(new { mensaje = "El correo ya está registrado." });
 
-                // ⚠️ Asegura que la fecha de registro no sea nula
+                // ⚠️ Corregimos campos que pueden causar error
                 usuario.FechaRegistro ??= DateTime.UtcNow;
+                usuario.RolId ??= 2; // Cliente por defecto
 
                 _context.Usuarios.Add(usuario);
                 await _context.SaveChangesAsync();
 
-                var rol = await _context.Roles.FindAsync(usuario.RolId);
+                var rol = usuario.RolId != null
+                    ? await _context.Roles.FindAsync(usuario.RolId)
+                    : null;
 
                 var usuarioDto = new UsuarioDto
                 {
@@ -78,6 +81,9 @@ namespace OlivarBackend.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Error al registrar usuario: " + ex.Message);
+                Console.WriteLine("Inner: " + ex.InnerException?.Message);
+
                 return StatusCode(500, new
                 {
                     mensaje = "❌ Error al registrar el usuario.",
