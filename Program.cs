@@ -1,23 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using OlivarBackend.Data;
-using OlivarBackend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using OlivarBackend.Config;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔌 Conexión a la base de datos
-builder.Services.AddDbContext<RestauranteDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// ⚙️ Configurar JWT desde appsettings.json
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
-var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
-
-// 🔒 Autenticación JWT
+// 🔐 JWT
+var jwtSettings = builder.Configuration.GetSection("Jwt");
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -25,86 +16,54 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
-        ValidIssuer = jwtSettings.Issuer,
         ValidateAudience = true,
-        ValidAudience = jwtSettings.Audience,
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
         ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]!))
     };
 });
 
-// 📦 Servicios personalizados
-builder.Services.AddScoped<LoginService>();
-builder.Services.AddScoped<TokenService>();
-
-// 🧩 Controladores
+// 🔧 Agregar servicios
 builder.Services.AddControllers();
-
-// 📚 Swagger con soporte JWT
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+
+// ✅ Swagger disponible siempre
+builder.Services.AddSwaggerGen(c =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Olivar API",
-        Version = "v1",
-        Description = "Documentación de la API para el restaurante Olivar"
-    });
-
-    // 🔒 Configuración para botón Authorize (JWT)
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        Description = "Ingrese su token JWT como: **Bearer {token}**"
-    });
-
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Olivar API", Version = "v1" });
 });
 
-
-builder.Services.AddScoped<IPermisoService, PermisoService>();
-
-
-builder.Services.AddDbContext<RestauranteDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-
-// 🌐 CORS para permitir peticiones externas (frontend, móvil)
+// 🔗 CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
         policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
+// 🔌 DbContext
+builder.Services.AddDbContext<RestauranteDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
+
 var app = builder.Build();
 
-// Validar conexión a la base de datos al iniciar
+// ✅ Establecer puerto si se ejecuta en Render
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+app.Urls.Add($"http://*:{port}");
+
+// ✅ Verifica conexión a la base de datos al iniciar
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<RestauranteDbContext>();
@@ -122,34 +81,42 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// 🌎 Middleware para desarrollo o producción
-if (app.Environment.IsDevelopment())
+// ✅ Swagger
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseDeveloperExceptionPage(); // Mostrar detalles de error en desarrollo
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Olivar API V1");
-    });
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Olivar API V1");
+    c.RoutePrefix = "swagger";
+});
+
+// Middleware general
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+    app.UseHsts();
 }
 else
 {
-    app.UseExceptionHandler("/Error"); // Ruta para errores en producción
-    app.UseHsts();
+    app.UseDeveloperExceptionPage();
 }
 
-app.UseHttpsRedirection();
+// ⚠️ HTTPS solo en desarrollo (Render ya usa HTTPS por fuera)
+if (!app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 
-app.UseRouting();
-
+app.UseStaticFiles();
 app.UseCors("AllowAll");
-
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
-// Endpoint para manejar errores globales (producción)
+// ✅ Ruta raíz para Render
+app.MapGet("/", () => "🚀 Backend Olivar activo en Render.");
+
+// Ruta por defecto para errores
 app.Map("/Error", (HttpContext httpContext) =>
 {
     return Results.Problem("Ha ocurrido un error inesperado.");

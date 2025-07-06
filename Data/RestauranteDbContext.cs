@@ -246,7 +246,6 @@ public partial class RestauranteDbContext : DbContext
                 .HasForeignKey(d => d.UsuarioId)
                 .HasConstraintName("FK__LogsSiste__Usuar__07C12930");
         });
-
         modelBuilder.Entity<Notificacione>(entity =>
         {
             entity.HasKey(e => e.NotificacionId).HasName("PK__Notifica__BCC120243920B53E");
@@ -254,15 +253,21 @@ public partial class RestauranteDbContext : DbContext
             entity.Property(e => e.FechaEnvio)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+
             entity.Property(e => e.Leida).HasDefaultValue(false);
             entity.Property(e => e.Mensaje).HasMaxLength(255);
             entity.Property(e => e.Titulo).HasMaxLength(100);
 
-            entity.HasOne(d => d.Usuario).WithMany(p => p.Notificaciones)
+            // 🔧 Ajuste importante aquí
+            entity.HasOne(d => d.Usuario)
+                .WithMany(p => p.Notificaciones)
                 .HasForeignKey(d => d.UsuarioId)
+                .IsRequired(false) // ✅ Permite que UsuarioId sea null
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Notificac__Usuar__7B5B524B");
         });
+
+
 
         modelBuilder.Entity<Pago>(entity =>
         {

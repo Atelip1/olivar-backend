@@ -7,7 +7,7 @@ public partial class Notificacione
 {
     public int NotificacionId { get; set; }
 
-    public int UsuarioId { get; set; }
+    public int? UsuarioId { get; set; }
 
     public string? Titulo { get; set; }
 
