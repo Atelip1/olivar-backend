@@ -53,6 +53,9 @@ namespace OlivarBackend.Controllers
                 if (existe)
                     return Conflict(new { mensaje = "El correo ya está registrado." });
 
+                // ⚠️ Asegura que la fecha de registro no sea nula
+                usuario.FechaRegistro ??= DateTime.UtcNow;
+
                 _context.Usuarios.Add(usuario);
                 await _context.SaveChangesAsync();
 
@@ -82,6 +85,7 @@ namespace OlivarBackend.Controllers
                 });
             }
         }
+
 
         // 🔒 Protegido: Obtener todos los usuarios
         [Authorize]
