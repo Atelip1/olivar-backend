@@ -21,7 +21,7 @@ namespace OlivarBackend.Controllers
             _tokenService = tokenService;
         }
 
-        // 🚫 Público: Login
+        // 🚫 Login
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto request)
@@ -42,27 +42,33 @@ namespace OlivarBackend.Controllers
             return Ok(new LoginResponse { Token = token });
         }
 
-        // 🚫 Público: Registro de usuario (con manejo de errores)
+        // ✅ Registro de usuario
         [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult<UsuarioDto>> PostUsuario(Usuario usuario)
+        public async Task<ActionResult<UsuarioDto>> PostUsuario([FromBody] UsuarioCrearDto dto)
         {
             try
             {
-                var existe = await _context.Usuarios.AnyAsync(u => u.Email == usuario.Email);
+                var existe = await _context.Usuarios.AnyAsync(u => u.Email == dto.Email);
                 if (existe)
                     return Conflict(new { mensaje = "El correo ya está registrado." });
 
-                // ⚠️ Corregimos campos que pueden causar error
-                usuario.FechaRegistro ??= DateTime.UtcNow;
-                usuario.RolId ??= 2; // Cliente por defecto
+                var usuario = new Usuario
+                {
+                    Nombre = dto.Nombre,
+                    Apellido = dto.Apellido,
+                    Email = dto.Email,
+                    Contrasena = dto.Contrasena,
+                    Telefono = dto.Telefono,
+                    Direccion = dto.Direccion,
+                    FechaRegistro = DateTime.UtcNow,
+                    RolId = dto.RolId
+                };
 
                 _context.Usuarios.Add(usuario);
                 await _context.SaveChangesAsync();
 
-                var rol = usuario.RolId != null
-                    ? await _context.Roles.FindAsync(usuario.RolId)
-                    : null;
+                var rol = await _context.Roles.FindAsync(usuario.RolId);
 
                 var usuarioDto = new UsuarioDto
                 {
@@ -81,9 +87,6 @@ namespace OlivarBackend.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error al registrar usuario: " + ex.Message);
-                Console.WriteLine("Inner: " + ex.InnerException?.Message);
-
                 return StatusCode(500, new
                 {
                     mensaje = "❌ Error al registrar el usuario.",
@@ -92,8 +95,7 @@ namespace OlivarBackend.Controllers
             }
         }
 
-
-        // 🔒 Protegido: Obtener todos los usuarios
+        // 🔒 Obtener todos
         [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UsuarioDto>>> GetUsuarios()
@@ -116,7 +118,7 @@ namespace OlivarBackend.Controllers
             return Ok(usuariosDto);
         }
 
-        // 🔒 Protegido: Obtener un usuario por ID
+        // 🔒 Obtener por ID
         [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<UsuarioDto>> GetUsuarioById(int id)
@@ -144,7 +146,7 @@ namespace OlivarBackend.Controllers
             return Ok(usuarioDto);
         }
 
-        // 🔒 Protegido: Editar usuario
+        // 🔒 Editar
         [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUsuario(int id, Usuario usuario)
@@ -169,7 +171,7 @@ namespace OlivarBackend.Controllers
             return NoContent();
         }
 
-        // 🔒 Protegido: Eliminar usuario
+        // 🔒 Eliminar
         [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUsuario(int id)
