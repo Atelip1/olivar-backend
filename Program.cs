@@ -3,6 +3,7 @@ using Microsoft.OpenApi.Models;
 using OlivarBackend.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using OlivarBackend.Services; // 👈 Asegúrate de tener este using
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,11 +32,14 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// ✅ REGISTRAR TokenService para que pueda inyectarse
+builder.Services.AddScoped<TokenService>();
+
 // 🔧 Agregar servicios
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// ✅ Swagger disponible siempre
+// ✅ Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Olivar API", Version = "v1" });
@@ -59,11 +63,11 @@ builder.Services.AddDbContext<RestauranteDbContext>(options =>
 
 var app = builder.Build();
 
-// ✅ Establecer puerto si se ejecuta en Render
+// ✅ Establecer puerto en Render
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 app.Urls.Add($"http://*:{port}");
 
-// ✅ Verifica conexión a la base de datos al iniciar
+// ✅ Verificar conexión a la BD
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<RestauranteDbContext>();
@@ -81,7 +85,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// ✅ Swagger
+// Middleware
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -89,7 +93,6 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = "swagger";
 });
 
-// Middleware general
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -100,7 +103,7 @@ else
     app.UseDeveloperExceptionPage();
 }
 
-// ⚠️ HTTPS solo en desarrollo (Render ya usa HTTPS por fuera)
+// ⚠️ HTTPS en desarrollo
 if (!app.Environment.IsProduction())
 {
     app.UseHttpsRedirection();
@@ -113,10 +116,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// ✅ Ruta raíz para Render
+// ✅ Ruta para verificar que Render está activo
 app.MapGet("/", () => "🚀 Backend Olivar activo en Render.");
 
-// Ruta por defecto para errores
+// Ruta genérica para errores
 app.Map("/Error", (HttpContext httpContext) =>
 {
     return Results.Problem("Ha ocurrido un error inesperado.");
