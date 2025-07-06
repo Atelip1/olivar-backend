@@ -42,34 +42,45 @@ namespace OlivarBackend.Controllers
             return Ok(new LoginResponse { Token = token });
         }
 
-        // 🚫 Público: Registro de usuario
+        // 🚫 Público: Registro de usuario (con manejo de errores)
         [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<UsuarioDto>> PostUsuario(Usuario usuario)
         {
-            var existe = await _context.Usuarios.AnyAsync(u => u.Email == usuario.Email);
-            if (existe)
-                return Conflict(new { mensaje = "El correo ya está registrado." });
-
-            _context.Usuarios.Add(usuario);
-            await _context.SaveChangesAsync();
-
-            var rol = await _context.Roles.FindAsync(usuario.RolId);
-
-            var usuarioDto = new UsuarioDto
+            try
             {
-                UsuarioId = usuario.UsuarioId,
-                Nombre = usuario.Nombre,
-                Apellido = usuario.Apellido,
-                Email = usuario.Email,
-                Telefono = usuario.Telefono,
-                Direccion = usuario.Direccion,
-                FechaRegistro = usuario.FechaRegistro,
-                RolId = usuario.RolId,
-                RolNombre = rol?.Nombre
-            };
+                var existe = await _context.Usuarios.AnyAsync(u => u.Email == usuario.Email);
+                if (existe)
+                    return Conflict(new { mensaje = "El correo ya está registrado." });
 
-            return CreatedAtAction(nameof(GetUsuarioById), new { id = usuario.UsuarioId }, usuarioDto);
+                _context.Usuarios.Add(usuario);
+                await _context.SaveChangesAsync();
+
+                var rol = await _context.Roles.FindAsync(usuario.RolId);
+
+                var usuarioDto = new UsuarioDto
+                {
+                    UsuarioId = usuario.UsuarioId,
+                    Nombre = usuario.Nombre,
+                    Apellido = usuario.Apellido,
+                    Email = usuario.Email,
+                    Telefono = usuario.Telefono,
+                    Direccion = usuario.Direccion,
+                    FechaRegistro = usuario.FechaRegistro,
+                    RolId = usuario.RolId,
+                    RolNombre = rol?.Nombre
+                };
+
+                return CreatedAtAction(nameof(GetUsuarioById), new { id = usuario.UsuarioId }, usuarioDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    mensaje = "❌ Error al registrar el usuario.",
+                    detalle = ex.InnerException?.Message ?? ex.Message
+                });
+            }
         }
 
         // 🔒 Protegido: Obtener todos los usuarios
@@ -167,45 +178,5 @@ namespace OlivarBackend.Controllers
         {
             return _context.Usuarios.Any(u => u.UsuarioId == id);
         }
-        [AllowAnonymous]
-        [HttpPost]
-        public async Task<ActionResult<UsuarioDto>> PostUsuario(Usuario usuario)
-        {
-            try
-            {
-                var existe = await _context.Usuarios.AnyAsync(u => u.Email == usuario.Email);
-                if (existe)
-                    return Conflict(new { mensaje = "El correo ya está registrado." });
-
-                _context.Usuarios.Add(usuario);
-                await _context.SaveChangesAsync();
-
-                var rol = await _context.Roles.FindAsync(usuario.RolId);
-
-                var usuarioDto = new UsuarioDto
-                {
-                    UsuarioId = usuario.UsuarioId,
-                    Nombre = usuario.Nombre,
-                    Apellido = usuario.Apellido,
-                    Email = usuario.Email,
-                    Telefono = usuario.Telefono,
-                    Direccion = usuario.Direccion,
-                    FechaRegistro = usuario.FechaRegistro,
-                    RolId = usuario.RolId,
-                    RolNombre = rol?.Nombre
-                };
-
-                return CreatedAtAction(nameof(GetUsuarioById), new { id = usuario.UsuarioId }, usuarioDto);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    mensaje = "❌ Error al registrar el usuario.",
-                    detalle = ex.InnerException?.Message ?? ex.Message
-                });
-            }
-        }
-
     }
 }
