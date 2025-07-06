@@ -90,11 +90,12 @@ namespace OlivarBackend.Controllers
                 return StatusCode(500, new
                 {
                     mensaje = "❌ Error al registrar el usuario.",
-                    exception = ex.ToString(), // muestra traza completa
-                    inner = ex.InnerException?.ToString(),
+                    exception = ex.Message,
+                    inner = ex.InnerException?.Message,
                     detalle = ex.InnerException?.Message ?? ex.Message
                 });
             }
+
         }
 
 
