@@ -87,17 +87,16 @@ namespace OlivarBackend.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine("❌ ERROR REGISTRO USUARIO: " + ex);
                 return StatusCode(500, new
                 {
                     mensaje = "❌ Error al registrar el usuario.",
-                    exception = ex.ToString(), // 👈 para obtener más detalle
+                    exception = ex.ToString(), // muestra traza completa
                     inner = ex.InnerException?.ToString(),
                     detalle = ex.InnerException?.Message ?? ex.Message
                 });
             }
-
         }
+
 
         // 🔒 Obtener todos
         [Authorize]
