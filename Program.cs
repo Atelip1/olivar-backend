@@ -3,13 +3,18 @@ using Microsoft.OpenApi.Models;
 using OlivarBackend.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using OlivarBackend.Services; // 👈 Asegúrate de tener este using
+using OlivarBackend.Services;
+using OlivarBackend.Config; // <- Asegúrate de tener tu clase JwtSettings aquí
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // 🔐 JWT
-var jwtSettings = builder.Configuration.GetSection("Jwt");
+var jwtSection = builder.Configuration.GetSection("JwtSettings");
+builder.Services.Configure<JwtSettings>(jwtSection); // Permite inyectar JwtSettings en TokenService
+
+var jwtSettings = jwtSection.Get<JwtSettings>(); // ✅ Obtiene los valores reales
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -26,20 +31,18 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]!))
+        ValidIssuer = jwtSettings.Issuer,
+        ValidAudience = jwtSettings.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
     };
 });
 
-// ✅ REGISTRAR TokenService para que pueda inyectarse
+// ✅ Registrar servicios personalizados
 builder.Services.AddScoped<TokenService>();
 
-// 🔧 Agregar servicios
+// 🔧 Agregar servicios de controladores y Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
-// ✅ Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Olivar API", Version = "v1" });
@@ -67,16 +70,14 @@ var app = builder.Build();
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 app.Urls.Add($"http://*:{port}");
 
-// ✅ Verificar conexión a la BD
+// ✅ Verificar conexión a BD
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<RestauranteDbContext>();
     try
     {
         if (!db.Database.CanConnect())
-        {
             throw new Exception("No se pudo conectar a la base de datos.");
-        }
     }
     catch (Exception ex)
     {
@@ -103,7 +104,7 @@ else
     app.UseDeveloperExceptionPage();
 }
 
-// ⚠️ HTTPS en desarrollo
+// ⚠️ HTTPS solo en desarrollo
 if (!app.Environment.IsProduction())
 {
     app.UseHttpsRedirection();
@@ -111,15 +112,15 @@ if (!app.Environment.IsProduction())
 
 app.UseStaticFiles();
 app.UseCors("AllowAll");
-app.UseAuthentication();
+app.UseAuthentication(); // ✅ JWT
 app.UseAuthorization();
 
 app.MapControllers();
 
-// ✅ Ruta para verificar que Render está activo
+// Ruta para verificar que está activo
 app.MapGet("/", () => "🚀 Backend Olivar activo en Render.");
 
-// Ruta genérica para errores
+// Ruta para errores generales
 app.Map("/Error", (HttpContext httpContext) =>
 {
     return Results.Problem("Ha ocurrido un error inesperado.");
