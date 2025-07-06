@@ -28,19 +28,24 @@ namespace OlivarBackend.Controllers
         {
             var usuario = await _context.Usuarios
                 .Include(u => u.Rol)
-                .SingleOrDefaultAsync(u => u.Email == request.Email);
+                .FirstOrDefaultAsync(u => u.Email == request.Email);
 
             if (usuario == null || usuario.Contrasena != request.Contrasena)
-                return Unauthorized("Usuario o contraseña incorrectos");
+                return Unauthorized(new { mensaje = "Usuario o contraseña incorrectos" });
+
+            // Validar que el rol tenga nombre
+            if (usuario.Rol == null || string.IsNullOrEmpty(usuario.Rol.Nombre))
+                return StatusCode(500, new { mensaje = "El usuario no tiene un rol válido asignado." });
 
             var token = _tokenService.GenerateToken(
                 usuario.UsuarioId.ToString(),
                 usuario.Email,
-                usuario.Rol?.Nombre ?? "Usuario"
+                usuario.Rol.Nombre
             );
 
             return Ok(new LoginResponse { Token = token });
         }
+
 
         // ✅ Registro de usuario
         [AllowAnonymous]
