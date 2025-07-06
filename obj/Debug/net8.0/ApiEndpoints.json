@@ -1461,6 +1461,32 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "OlivarBackend.Controllers.PedidosController",
+    "Method": "GetPedidosPorUsuario",
+    "RelativePath": "api/Pedidos/usuario/{usuarioId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "usuarioId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[OlivarBackend.DTOs.PedidoDto, OlivarBackend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "OlivarBackend.Controllers.PermisosController",
     "Method": "Get",
     "RelativePath": "api/Permisos",
@@ -2107,8 +2133,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "usuario",
-        "Type": "OlivarBackend.Models.Usuario",
+        "Name": "dto",
+        "Type": "UsuarioCrearDto",
         "IsRequired": true
       }
     ],
