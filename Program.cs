@@ -6,8 +6,14 @@ using Microsoft.IdentityModel.Tokens;
 using OlivarBackend.Services;
 using OlivarBackend.Config; // <- Asegúrate de tener tu clase JwtSettings aquí
 using System.Text;
+using PdfSharpCore.Fonts;       // Para usar GlobalFontSettings
+using OlivarBackend.Services;  // Donde está tu CustomFontResolver
+
+
+
 
 var builder = WebApplication.CreateBuilder(args);
+GlobalFontSettings.FontResolver = new CustomFontResolver();
 
 // 🔐 JWT
 var jwtSection = builder.Configuration.GetSection("JwtSettings");
