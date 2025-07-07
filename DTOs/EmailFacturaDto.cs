@@ -2,15 +2,18 @@
 {
     public class EmailFacturaDto
     {
-        public required string? Email { get; set; }
-        public required ResumenFactura Resumen { get; set; }
+        public string Email { get; set; } = string.Empty;
+
+        public ResumenFacturaDto Resumen { get; set; } = new();
     }
 
-    public class ResumenFactura
+
+    public class ResumenFacturaDto
     {
         public decimal Total { get; set; }
-        public string MetodoPago { get; set; }
-        public string MetodoEntrega { get; set; }
-        public string Fecha { get; set; }
+        public string MetodoPago { get; set; } = string.Empty;
+        public string MetodoEntrega { get; set; } = string.Empty;
+        public string Fecha { get; set; } = string.Empty;
     }
+
 }
