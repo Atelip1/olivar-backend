@@ -5,42 +5,34 @@ public class CustomFontResolver : IFontResolver
 {
     public byte[] GetFont(string faceName)
     {
-        var fontName = faceName.ToLowerInvariant();
+        var assembly = Assembly.GetExecutingAssembly();
 
-        return fontName switch
+        var resourceName = faceName switch
         {
-            "verdana" => LoadFontData("Fonts.verdana.ttf"),
-            "verdanab" => LoadFontData("Fonts.verdanab.ttf"),
-            "verdanai" => LoadFontData("Fonts.verdanai.ttf"),
-            "verdanaz" => LoadFontData("Fonts.verdanaz.ttf"),
-            _ => throw new InvalidOperationException($"Fuente no encontrada: {faceName}")
+            "Verdana#Regular" => "OlivarBackend.Fonts.verdana.ttf",
+            "Verdana#Bold" => "OlivarBackend.Fonts.verdanab.ttf",
+            _ => throw new InvalidOperationException($"No font defined for {faceName}")
         };
+
+        using var stream = assembly.GetManifestResourceStream(resourceName);
+        if (stream == null)
+            throw new InvalidOperationException("No se pudo cargar la fuente " + resourceName);
+
+        using var ms = new MemoryStream();
+        stream.CopyTo(ms);
+        return ms.ToArray();
     }
 
     public FontResolverInfo ResolveTypeface(string familyName, bool isBold, bool isItalic)
     {
-        if (familyName.ToLowerInvariant() == "verdana")
+        if (familyName.Equals("Verdana", StringComparison.OrdinalIgnoreCase))
         {
-            if (isBold && isItalic)
-                return new FontResolverInfo("verdanaz");
             if (isBold)
-                return new FontResolverInfo("verdanab");
-            if (isItalic)
-                return new FontResolverInfo("verdanai");
-
-            return new FontResolverInfo("verdana");
+                return new FontResolverInfo("Verdana#Bold");
+            else
+                return new FontResolverInfo("Verdana#Regular");
         }
 
-        throw new InvalidOperationException($"Fuente no soportada: {familyName}");
-    }
-
-    private static byte[] LoadFontData(string resourceName)
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-        using var stream = assembly.GetManifestResourceStream(resourceName)
-            ?? throw new InvalidOperationException($"No se encontró la fuente embebida: {resourceName}");
-        using var ms = new MemoryStream();
-        stream.CopyTo(ms);
-        return ms.ToArray();
+        return PlatformFontResolver.ResolveTypeface(familyName, isBold, isItalic);
     }
 }

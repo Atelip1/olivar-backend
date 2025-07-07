@@ -3,6 +3,7 @@ using PdfSharp.Pdf;
 using System.IO;
 using OlivarBackend.Dto;
 using PdfSharp.Fonts;
+using PdfSharp.Fonts.OpenType;
 
 namespace OlivarBackend.Services
 {
@@ -10,14 +11,13 @@ namespace OlivarBackend.Services
     {
         public static byte[] GenerarFacturaPdf(EmailFacturaDto dto)
         {
-            // Registrar una sola vez el resolutor si tienes CustomFontResolver (opcional)
+            // ⚠️ Asegúrate de tener esta carpeta y los .ttf en wwwroot/Fonts
             GlobalFontSettings.FontResolver ??= new CustomFontResolver();
 
             var pdf = new PdfDocument();
             var page = pdf.AddPage();
             var gfx = XGraphics.FromPdfPage(page);
 
-            // ✅ Usa XFontStyleEx (disponible en PdfSharp-gdi 6.2.0)
             var fontTitulo = new XFont("Verdana", 18, XFontStyleEx.Bold);
             var fontTexto = new XFont("Verdana", 12, XFontStyleEx.Regular);
 
@@ -29,19 +29,17 @@ namespace OlivarBackend.Services
             y += 50;
             gfx.DrawString($"Correo: {dto.Email}", fontTexto, XBrushes.Black, new XRect(40, y, page.Width, 20), XStringFormats.TopLeft);
             y += 25;
-            gfx.DrawString($"Fecha: {dto.Resumen.Fecha}", fontTexto, XBrushes.Black, new XRect(40, y, page.Width, 20), XStringFormats.TopLeft);
+            gfx.DrawString($"Fecha: {dto.Resumen?.Fecha}", fontTexto, XBrushes.Black, new XRect(40, y, page.Width, 20), XStringFormats.TopLeft);
             y += 25;
-            gfx.DrawString($"Método de Pago: {dto.Resumen.MetodoPago}", fontTexto, XBrushes.Black, new XRect(40, y, page.Width, 20), XStringFormats.TopLeft);
+            gfx.DrawString($"Método de Pago: {dto.Resumen?.MetodoPago}", fontTexto, XBrushes.Black, new XRect(40, y, page.Width, 20), XStringFormats.TopLeft);
             y += 25;
-            gfx.DrawString($"Método de Entrega: {dto.Resumen.MetodoEntrega}", fontTexto, XBrushes.Black, new XRect(40, y, page.Width, 20), XStringFormats.TopLeft);
+            gfx.DrawString($"Método de Entrega: {dto.Resumen?.MetodoEntrega}", fontTexto, XBrushes.Black, new XRect(40, y, page.Width, 20), XStringFormats.TopLeft);
             y += 25;
-            gfx.DrawString($"Total: S/. {dto.Resumen.Total:F2}", fontTexto, XBrushes.Black, new XRect(40, y, page.Width, 20), XStringFormats.TopLeft);
+            gfx.DrawString($"Total: S/. {dto.Resumen?.Total:F2}", fontTexto, XBrushes.Black, new XRect(40, y, page.Width, 20), XStringFormats.TopLeft);
 
-            using (var stream = new MemoryStream())
-            {
-                pdf.Save(stream, false);
-                return stream.ToArray();
-            }
+            using var stream = new MemoryStream();
+            pdf.Save(stream, false);
+            return stream.ToArray();
         }
     }
 }
