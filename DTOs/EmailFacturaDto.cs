@@ -2,8 +2,8 @@
 {
     public class EmailFacturaDto
     {
-        public string? Email { get; set; }
-        public ResumenFactura Resumen { get; set; }
+        public required string? Email { get; set; }
+        public required ResumenFactura Resumen { get; set; }
     }
 
     public class ResumenFactura
