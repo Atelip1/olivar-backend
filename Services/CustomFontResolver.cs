@@ -1,8 +1,12 @@
-﻿using PdfSharp.Fonts;
+﻿using PdfSharpCore.Fonts;
 using System.Reflection;
+using System.IO;
 
 public class CustomFontResolver : IFontResolver
 {
+    // 🔥 Propiedad obligatoria que faltaba
+    public string DefaultFontName => "Verdana";
+
     public byte[] GetFont(string faceName)
     {
         var assembly = Assembly.GetExecutingAssembly();
@@ -11,12 +15,11 @@ public class CustomFontResolver : IFontResolver
         {
             "Verdana#Regular" => "OlivarBackend.Fonts.verdana.ttf",
             "Verdana#Bold" => "OlivarBackend.Fonts.verdanab.ttf",
-            _ => throw new InvalidOperationException($"No font defined for {faceName}")
+            _ => throw new InvalidOperationException($"No se encontró la fuente para {faceName}")
         };
 
-        using var stream = assembly.GetManifestResourceStream(resourceName);
-        if (stream == null)
-            throw new InvalidOperationException("No se pudo cargar la fuente " + resourceName);
+        using var stream = assembly.GetManifestResourceStream(resourceName)
+            ?? throw new InvalidOperationException($"No se pudo cargar la fuente embebida {resourceName}");
 
         using var ms = new MemoryStream();
         stream.CopyTo(ms);
@@ -27,12 +30,12 @@ public class CustomFontResolver : IFontResolver
     {
         if (familyName.Equals("Verdana", StringComparison.OrdinalIgnoreCase))
         {
-            if (isBold)
-                return new FontResolverInfo("Verdana#Bold");
-            else
-                return new FontResolverInfo("Verdana#Regular");
+            return isBold
+                ? new FontResolverInfo("Verdana#Bold")
+                : new FontResolverInfo("Verdana#Regular");
         }
 
-        return PlatformFontResolver.ResolveTypeface(familyName, isBold, isItalic);
+        // Fallback
+        return new FontResolverInfo("Verdana#Regular");
     }
 }
