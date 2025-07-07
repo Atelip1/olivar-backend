@@ -1,44 +1,46 @@
 ﻿using PdfSharp.Fonts;
-using System;
-using System.IO;
+using System.Reflection;
 
-namespace OlivarBackend.Services
+public class CustomFontResolver : IFontResolver
 {
-    public class CustomFontResolver : IFontResolver
+    public byte[] GetFont(string faceName)
     {
-        private static readonly string FontFolder = Path.Combine(Directory.GetCurrentDirectory(), "Fonts");
+        var fontName = faceName.ToLowerInvariant();
 
-        public byte[] GetFont(string faceName)
+        return fontName switch
         {
-            string fontPath = faceName switch
-            {
-                "Verdana#Regular" => Path.Combine(FontFolder, "verdana.ttf"),
-                "Verdana#Bold" => Path.Combine(FontFolder, "verdanab.ttf"),
-                "Verdana#Italic" => Path.Combine(FontFolder, "verdanai.ttf"),
-                "Verdana#BoldItalic" => Path.Combine(FontFolder, "verdanaz.ttf"),
-                _ => throw new ArgumentException($"Fuente no soportada: {faceName}")
-            };
+            "verdana" => LoadFontData("Fonts.verdana.ttf"),
+            "verdanab" => LoadFontData("Fonts.verdanab.ttf"),
+            "verdanai" => LoadFontData("Fonts.verdanai.ttf"),
+            "verdanaz" => LoadFontData("Fonts.verdanaz.ttf"),
+            _ => throw new InvalidOperationException($"Fuente no encontrada: {faceName}")
+        };
+    }
 
-            return File.ReadAllBytes(fontPath);
+    public FontResolverInfo ResolveTypeface(string familyName, bool isBold, bool isItalic)
+    {
+        if (familyName.ToLowerInvariant() == "verdana")
+        {
+            if (isBold && isItalic)
+                return new FontResolverInfo("verdanaz");
+            if (isBold)
+                return new FontResolverInfo("verdanab");
+            if (isItalic)
+                return new FontResolverInfo("verdanai");
+
+            return new FontResolverInfo("verdana");
         }
 
-        public FontResolverInfo ResolveTypeface(string familyName, bool isBold, bool isItalic)
-        {
-            if (string.Equals(familyName, "Verdana", StringComparison.OrdinalIgnoreCase))
-            {
-                if (isBold && isItalic)
-                    return new FontResolverInfo("Verdana#BoldItalic");
-                if (isBold)
-                    return new FontResolverInfo("Verdana#Bold");
-                if (isItalic)
-                    return new FontResolverInfo("Verdana#Italic");
-                return new FontResolverInfo("Verdana#Regular");
-            }
+        throw new InvalidOperationException($"Fuente no soportada: {familyName}");
+    }
 
-            // Si no se encuentra, se puede lanzar una excepción o usar fuente por defecto
-            return PlatformFontResolver.ResolveTypeface("Arial", isBold, isItalic);
-        }
-
-        public string DefaultFontName => "Verdana";
+    private static byte[] LoadFontData(string resourceName)
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        using var stream = assembly.GetManifestResourceStream(resourceName)
+            ?? throw new InvalidOperationException($"No se encontró la fuente embebida: {resourceName}");
+        using var ms = new MemoryStream();
+        stream.CopyTo(ms);
+        return ms.ToArray();
     }
 }

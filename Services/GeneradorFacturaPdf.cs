@@ -3,7 +3,6 @@ using PdfSharp.Pdf;
 using System.IO;
 using OlivarBackend.Dto;
 using PdfSharp.Fonts;
-using OlivarBackend.Services;
 
 namespace OlivarBackend.Services
 {
@@ -11,13 +10,14 @@ namespace OlivarBackend.Services
     {
         public static byte[] GenerarFacturaPdf(EmailFacturaDto dto)
         {
-            // Registrar solo una vez el resolutor de fuente
+            // Registrar una sola vez el resolutor si tienes CustomFontResolver (opcional)
             GlobalFontSettings.FontResolver ??= new CustomFontResolver();
 
             var pdf = new PdfDocument();
             var page = pdf.AddPage();
             var gfx = XGraphics.FromPdfPage(page);
 
+            // ✅ Usa XFontStyleEx (disponible en PdfSharp-gdi 6.2.0)
             var fontTitulo = new XFont("Verdana", 18, XFontStyleEx.Bold);
             var fontTexto = new XFont("Verdana", 12, XFontStyleEx.Regular);
 
