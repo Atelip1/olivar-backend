@@ -112,7 +112,7 @@ namespace OlivarBackend.Controllers
 
 
         // 🔒 Obtener todos
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UsuarioDto>>> GetUsuarios()
         {
