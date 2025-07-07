@@ -4,7 +4,6 @@ using System.IO;
 
 public class CustomFontResolver : IFontResolver
 {
-    // 🔥 Propiedad obligatoria que faltaba
     public string DefaultFontName => "Verdana";
 
     public byte[] GetFont(string faceName)
@@ -15,6 +14,8 @@ public class CustomFontResolver : IFontResolver
         {
             "Verdana#Regular" => "OlivarBackend.Fonts.verdana.ttf",
             "Verdana#Bold" => "OlivarBackend.Fonts.verdanab.ttf",
+            "Verdana#Italic" => "OlivarBackend.Fonts.verdanai.ttf",
+            "Verdana#BoldItalic" => "OlivarBackend.Fonts.verdanaz.ttf",
             _ => throw new InvalidOperationException($"No se encontró la fuente para {faceName}")
         };
 
@@ -30,12 +31,16 @@ public class CustomFontResolver : IFontResolver
     {
         if (familyName.Equals("Verdana", StringComparison.OrdinalIgnoreCase))
         {
-            return isBold
-                ? new FontResolverInfo("Verdana#Bold")
-                : new FontResolverInfo("Verdana#Regular");
+            if (isBold && isItalic)
+                return new FontResolverInfo("Verdana#BoldItalic");
+            else if (isBold)
+                return new FontResolverInfo("Verdana#Bold");
+            else if (isItalic)
+                return new FontResolverInfo("Verdana#Italic");
+            else
+                return new FontResolverInfo("Verdana#Regular");
         }
 
-        // Fallback
         return new FontResolverInfo("Verdana#Regular");
     }
 }
