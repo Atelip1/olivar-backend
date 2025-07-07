@@ -25,7 +25,7 @@ namespace OlivarBackend.Controllers
                                 $"<p>Método de Entrega: {dto.Resumen.MetodoEntrega}</p>" +
                                 $"<p>Fecha: {dto.Resumen.Fecha}</p>";
 
-                var mail = new MailMessage("tucorreo@gmail.com", dto.Email)
+                var mail = new MailMessage("mariadelpilartasaycolaque@gmail.com", dto.Email)
                 {
                     Subject = "🧾 Factura de tu pedido",
                     Body = cuerpo,
