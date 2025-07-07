@@ -135,7 +135,7 @@ namespace OlivarBackend.Controllers
         }
 
         // 🔒 Obtener por ID
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<UsuarioDto>> GetUsuarioById(int id)
         {
@@ -163,7 +163,7 @@ namespace OlivarBackend.Controllers
         }
 
         // 🔒 Editar
-        [Authorize]
+        [AllowAnonymous]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUsuario(int id, Usuario usuario)
         {
@@ -188,7 +188,7 @@ namespace OlivarBackend.Controllers
         }
 
         // 🔒 Eliminar
-        [Authorize]
+        [AllowAnonymous]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUsuario(int id)
         {
