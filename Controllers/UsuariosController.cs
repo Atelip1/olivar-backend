@@ -33,7 +33,6 @@ namespace OlivarBackend.Controllers
             if (usuario == null || usuario.Contrasena != request.Contrasena)
                 return Unauthorized(new { mensaje = "Usuario o contraseña incorrectos" });
 
-            // Validar que el rol tenga nombre
             if (usuario.Rol == null || string.IsNullOrEmpty(usuario.Rol.Nombre))
                 return StatusCode(500, new { mensaje = "El usuario no tiene un rol válido asignado." });
 
@@ -43,8 +42,16 @@ namespace OlivarBackend.Controllers
                 usuario.Rol.Nombre
             );
 
-            return Ok(new LoginResponse { Token = token });
+            return Ok(new
+            {
+                usuarioId = usuario.UsuarioId,
+                email = usuario.Email,
+                nombre = usuario.Nombre,        // 👈 Aquí lo agregamos
+                rol = usuario.Rol.Nombre,
+                token = token
+            });
         }
+
 
 
         // ✅ Registro de usuario
