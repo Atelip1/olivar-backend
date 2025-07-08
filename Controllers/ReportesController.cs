@@ -46,5 +46,36 @@ namespace OlivarBackend.Controllers
 
             return Ok(resultado);
         }
+        [HttpGet("pedidos-dia")]
+        public IActionResult PedidosDelDia([FromQuery] DateTime fecha, [FromQuery] string estado = null)
+        {
+            var inicio = fecha.Date;
+            var fin = inicio.AddDays(1);
+
+            var pedidos = _context.Pedidos
+                .Where(p => p.Fecha >= inicio && p.Fecha < fin);
+
+            if (!string.IsNullOrEmpty(estado))
+            {
+                pedidos = pedidos.Where(p => p.Estado == estado);
+            }
+
+            var resultado = pedidos
+                .Select(p => new
+                {
+                    PedidoId = p.PedidoId,           // ← Usa el nombre real de tu modelo
+                    UsuarioId = p.UsuarioId,
+                    Total = p.Total,
+                    Fecha = p.Fecha,
+                    MetodoPago = p.MetodoPago,
+                    MetodoEntrega = p.MetodoEntrega,
+                    Estado = p.Estado
+                })
+
+                .ToList();
+
+            return Ok(resultado);
+        }
+
     }
 }
