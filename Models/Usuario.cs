@@ -23,9 +23,6 @@ public partial class Usuario
 
     public int? RolId { get; set; }
 
-    public string? TokenRecuperacion { get; set; }
-
-    public DateTime? TokenExpiracion { get; set; }
 
 
 

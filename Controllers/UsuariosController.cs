@@ -23,53 +23,6 @@ namespace OlivarBackend.Controllers
             _tokenService = tokenService;
         }
 
-        // ✅ Recuperación de contraseña
-        [AllowAnonymous]
-        [HttpPost("enviar-recuperacion")]
-        public async Task<IActionResult> EnviarCorreoRecuperacion([FromBody] RecuperacionDto dto)
-        {
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == dto.Email);
-            if (usuario == null)
-                return NotFound(new { mensaje = "Correo no registrado." });
-
-            var token = Guid.NewGuid().ToString();
-            usuario.TokenRecuperacion = token;
-            usuario.TokenExpiracion = DateTime.UtcNow.AddMinutes(15);
-            await _context.SaveChangesAsync();
-
-            string enlace = $"https://olivar-front.onrender.com/reset-password?token={token}";
-
-            string asunto = "Recuperación de contraseña - Olivar";
-            string cuerpo = $@"
-                <h3>Hola {usuario.Nombre},</h3>
-                <p>Recibimos una solicitud para restablecer tu contraseña.</p>
-                <p>Haz clic en el siguiente enlace para continuar:</p>
-                <p><a href='{enlace}' target='_blank'>Restablecer contraseña</a></p>
-                <p><small>Este enlace expirará en 15 minutos.</small></p>";
-
-            await EnviarCorreo(dto.Email, asunto, cuerpo);
-
-            return Ok(new { mensaje = "Instrucciones enviadas al correo." });
-        }
-
-        private async Task EnviarCorreo(string destino, string asunto, string cuerpoHtml)
-        {
-            var remitente = "mariadelpilartasaycolaque@gmail.com";     // <-- cambia esto
-            var clave = "xjdp evhf oxjp veij";     // <-- cambia esto también
-
-            var smtp = new SmtpClient("smtp.gmail.com")
-            {
-                Port = 587,
-                Credentials = new NetworkCredential(remitente, clave),
-                EnableSsl = true
-            };
-
-            var mensaje = new MailMessage(remitente, destino, asunto, cuerpoHtml);
-            mensaje.IsBodyHtml = true;
-
-            await smtp.SendMailAsync(mensaje);
-        }
-
         // 🚫 Login
         [AllowAnonymous]
         [HttpPost("login")]
@@ -95,11 +48,13 @@ namespace OlivarBackend.Controllers
             {
                 usuarioId = usuario.UsuarioId,
                 email = usuario.Email,
-                nombre = usuario.Nombre,
+                nombre = usuario.Nombre,        // 👈 Aquí lo agregamos
                 rol = usuario.Rol.Nombre,
                 token = token
             });
         }
+
+
 
         // ✅ Registro de usuario
         [AllowAnonymous]
@@ -154,7 +109,9 @@ namespace OlivarBackend.Controllers
                     detalle = ex.InnerException?.Message ?? ex.Message
                 });
             }
+
         }
+
 
         // 🔒 Obtener todos
         [AllowAnonymous]
