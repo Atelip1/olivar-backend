@@ -15,6 +15,7 @@ public partial class RestauranteDbContext : DbContext
         : base(options)
     {
     }
+    public DbSet<Egreso> Egresos { get; set; }
 
     public virtual DbSet<Banner> Banners { get; set; }
 
