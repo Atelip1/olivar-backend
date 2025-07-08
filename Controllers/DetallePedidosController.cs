@@ -56,5 +56,21 @@ namespace OlivarBackend.Controllers
 
             return CreatedAtAction(nameof(PostDetalle), new { id = detalle.DetallePedidoId }, dto);
         }
+        [HttpGet("por-pedido/{pedidoId}")]
+        public async Task<IActionResult> GetPorPedido(int pedidoId)
+        {
+            var detalles = await _context.DetallesPedidos
+                .Where(d => d.PedidoId == pedidoId)
+                .Include(d => d.Producto) // Asegúrate que la relación exista
+                .Select(d => new {
+                    nombreProducto = d.Producto.Nombre,
+                    cantidad = d.Cantidad,
+                    precioUnitario = d.PrecioUnitario
+                })
+                .ToListAsync();
+
+            return Ok(detalles);
+        }
+
     }
 }
