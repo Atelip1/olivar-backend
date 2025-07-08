@@ -59,7 +59,8 @@ namespace OlivarBackend.Controllers
         [HttpGet("por-pedido/{pedidoId}")]
         public async Task<IActionResult> GetPorPedido(int pedidoId)
         {
-            var detalles = await _context.DetallesPedidos
+            var detalles = await _context.DetallePedidos
+
                 .Where(d => d.PedidoId == pedidoId)
                 .Include(d => d.Producto) // Asegúrate que la relación exista
                 .Select(d => new {
