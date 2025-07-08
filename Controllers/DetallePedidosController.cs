@@ -59,19 +59,30 @@ namespace OlivarBackend.Controllers
         [HttpGet("por-pedido/{pedidoId}")]
         public async Task<IActionResult> GetPorPedido(int pedidoId)
         {
-            var detalles = await _context.DetallePedidos
+            try
+            {
+                var detalles = await _context.DetallePedidos
+                    .Where(d => d.PedidoId == pedidoId)
+                    .Include(d => d.Producto)
+                    .Select(d => new {
+                        nombreProducto = d.Producto != null ? d.Producto.Nombre : "Sin nombre",
+                        cantidad = d.Cantidad,
+                        precioUnitario = d.PrecioUnitario
+                    })
+                    .ToListAsync();
 
-                .Where(d => d.PedidoId == pedidoId)
-                .Include(d => d.Producto) // Asegúrate que la relación exista
-                .Select(d => new {
-                    nombreProducto = d.Producto.Nombre,
-                    cantidad = d.Cantidad,
-                    precioUnitario = d.PrecioUnitario
-                })
-                .ToListAsync();
-
-            return Ok(detalles);
+                return Ok(detalles);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    error = "Error al obtener detalle del pedido",
+                    detalle = ex.Message
+                });
+            }
         }
+
 
     }
 }
