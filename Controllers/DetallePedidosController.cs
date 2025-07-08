@@ -56,32 +56,32 @@ namespace OlivarBackend.Controllers
 
             return CreatedAtAction(nameof(PostDetalle), new { id = detalle.DetallePedidoId }, dto);
         }
-        [HttpGet("por-pedido/{pedidoId}")]
-        public async Task<IActionResult> GetPorPedido(int pedidoId)
-        {
-            try
-            {
-                var detalles = await _context.DetallePedidos
-                    .Where(d => d.PedidoId == pedidoId)
-                    .Include(d => d.Producto)
-                    .Select(d => new {
-                        nombreProducto = d.Producto != null ? d.Producto.Nombre : "Sin nombre",
-                        cantidad = d.Cantidad,
-                        precioUnitario = d.PrecioUnitario
-                    })
-                    .ToListAsync();
 
-                return Ok(detalles);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
+        [HttpGet("por-pedido/{pedidoId}")]
+        public async Task<ActionResult<IEnumerable<DetallePedidoDto>>> GetPorPedido(int pedidoId)
+        {
+            var detalles = await _context.DetallesPedidos
+                .Where(d => d.PedidoId == pedidoId)
+                .Include(d => d.Producto)
+                .Select(d => new DetallePedidoDto
                 {
-                    error = "Error al obtener detalle del pedido",
-                    detalle = ex.Message
-                });
+                    DetallePedidoId = d.DetallePedidoId,
+                    PedidoId = d.PedidoId,
+                    ProductoId = d.ProductoId,
+                    NombreProducto = d.Producto.Nombre,
+                    Cantidad = d.Cantidad,
+                    PrecioUnitario = d.PrecioUnitario
+                })
+                .ToListAsync();
+
+            if (detalles == null || detalles.Count == 0)
+            {
+                return NotFound("No se encontraron productos para este pedido.");
             }
+
+            return Ok(detalles);
         }
+
 
 
     }
