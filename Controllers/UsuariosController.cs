@@ -101,6 +101,46 @@ namespace OlivarBackend.Controllers
             await smtp.SendMailAsync(mensaje);
         }
 
+        public class RestablecerPasswordDto
+        {
+            public string Token { get; set; }
+            public string NuevaContrasena { get; set; }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("restablecer-password")]
+        public async Task<IActionResult> RestablecerPassword([FromBody] RestablecerPasswordDto dto)
+        {
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.TokenRecuperacion == dto.Token);
+            if (usuario == null)
+                return BadRequest(new { mensaje = "Token inválido." });
+
+            if (usuario.TokenExpiracion == null || usuario.TokenExpiracion < DateTime.UtcNow)
+                return BadRequest(new { mensaje = "El token expiró." });
+
+            // Aquí deberías hashear la nueva contraseña antes de guardarla
+            usuario.Contrasena = HashPassword(dto.NuevaContrasena);
+
+            // Limpiar el token para que no se pueda reutilizar
+            usuario.TokenRecuperacion = null;
+            usuario.TokenExpiracion = null;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { mensaje = "Contraseña actualizada correctamente." });
+        }
+
+        // Ejemplo simple de método para hashear contraseña, puedes usar cualquier método seguro (como BCrypt)
+        private string HashPassword(string password)
+        {
+            // Esto es solo un ejemplo simple, no usar en producción sin un buen algoritmo de hash
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+            var bytes = System.Text.Encoding.UTF8.GetBytes(password);
+            var hash = sha256.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
+        }
+
+
 
 
 
