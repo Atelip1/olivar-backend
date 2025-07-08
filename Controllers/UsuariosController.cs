@@ -7,7 +7,6 @@ using OlivarBackend.Models;
 using OlivarBackend.Services;
 using System.Net.Mail;
 using System.Net;
-using OlivarBackend.DTOs;
 
 namespace OlivarBackend.Controllers
 {
@@ -33,7 +32,14 @@ namespace OlivarBackend.Controllers
                 .Include(u => u.Rol)
                 .FirstOrDefaultAsync(u => u.Email == request.Email);
 
-            if (usuario == null || usuario.Contrasena != request.Contrasena)
+            if (usuario == null)
+                return Unauthorized(new { mensaje = "Usuario o contraseña incorrectos" });
+
+            // Hashear la contraseña ingresada
+            string hashedInput = HashPassword(request.Contrasena);
+
+            // Comparar hashes
+            if (usuario.Contrasena != hashedInput)
                 return Unauthorized(new { mensaje = "Usuario o contraseña incorrectos" });
 
             if (usuario.Rol == null || string.IsNullOrEmpty(usuario.Rol.Nombre))
@@ -49,11 +55,12 @@ namespace OlivarBackend.Controllers
             {
                 usuarioId = usuario.UsuarioId,
                 email = usuario.Email,
-                nombre = usuario.Nombre,        // 👈 Aquí lo agregamos
+                nombre = usuario.Nombre,
                 rol = usuario.Rol.Nombre,
                 token = token
             });
         }
+
         // ✅ Recuperación de contraseña
         [AllowAnonymous]
         [HttpPost("enviar-recuperacion")]
