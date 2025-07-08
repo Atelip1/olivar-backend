@@ -168,7 +168,7 @@ namespace OlivarBackend.Controllers
                     Nombre = dto.Nombre,
                     Apellido = dto.Apellido,
                     Email = dto.Email,
-                    Contrasena = dto.Contrasena,
+                    Contrasena = HashPassword(dto.Contrasena),
                     Telefono = dto.Telefono,
                     Direccion = dto.Direccion,
                     FechaRegistro = DateTime.UtcNow,
