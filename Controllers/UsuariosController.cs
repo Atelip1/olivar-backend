@@ -7,6 +7,7 @@ using OlivarBackend.Models;
 using OlivarBackend.Services;
 using System.Net.Mail;
 using System.Net;
+using OlivarBackend.DTOs;
 
 namespace OlivarBackend.Controllers
 {
