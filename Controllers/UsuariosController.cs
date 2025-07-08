@@ -67,7 +67,7 @@ namespace OlivarBackend.Controllers
             usuario.TokenExpiracion = DateTime.UtcNow.AddMinutes(15);
             await _context.SaveChangesAsync();
 
-            string enlace = $"https://olivar-front.onrender.com/olivar/reset-password?token={token}";
+            string enlace = $"https://luxury-kringle-a0ff0a.netlify.app/contrasena/contrasena.html?token={token}";
             string asunto = "Recuperación de contraseña - Olivar";
             string cuerpo = $@"
         <h3>Hola {usuario.Nombre},</h3>
