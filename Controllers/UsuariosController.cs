@@ -55,7 +55,7 @@ namespace OlivarBackend.Controllers
         private async Task EnviarCorreo(string destino, string asunto, string cuerpoHtml)
         {
             var remitente = "mariadelpilartasaycolaque@gmail.com";     // <-- cambia esto
-            var clave = "lntv ywtr dwhi yqsi";     // <-- cambia esto también
+            var clave = "xjdp evhf oxjp veij";     // <-- cambia esto también
 
             var smtp = new SmtpClient("smtp.gmail.com")
             {
