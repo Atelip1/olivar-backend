@@ -23,6 +23,13 @@ public partial class Usuario
 
     public int? RolId { get; set; }
 
+    public string? TokenRecuperacion { get; set; }
+
+    public DateTime? TokenExpiracion { get; set; }
+
+
+
+
     public virtual ICollection<ComentariosProducto> ComentariosProductos { get; set; } = new List<ComentariosProducto>();
 
     public virtual ICollection<Consulta> Consulta { get; set; } = new List<Consulta>();

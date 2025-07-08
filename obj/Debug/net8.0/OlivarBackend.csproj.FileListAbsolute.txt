@@ -189,3 +189,9 @@ C:\Users\maria\source\repos\OlivarBackend\OlivarBackend\obj\Debug\net8.0\refint\
 C:\Users\maria\source\repos\OlivarBackend\OlivarBackend\obj\Debug\net8.0\OlivarBackend.pdb
 C:\Users\maria\source\repos\OlivarBackend\OlivarBackend\obj\Debug\net8.0\OlivarBackend.genruntimeconfig.cache
 C:\Users\maria\source\repos\OlivarBackend\OlivarBackend\obj\Debug\net8.0\ref\OlivarBackend.dll
+C:\Users\maria\source\repos\OlivarBackend\OlivarBackend\bin\Debug\net8.0\publish\web.config
+C:\Users\maria\source\repos\OlivarBackend\OlivarBackend\bin\Debug\net8.0\publish\appsettings.Development.json
+C:\Users\maria\source\repos\OlivarBackend\OlivarBackend\bin\Debug\net8.0\publish\appsettings.json
+C:\Users\maria\source\repos\OlivarBackend\OlivarBackend\bin\Debug\net8.0\publish\OlivarBackend.deps.json
+C:\Users\maria\source\repos\OlivarBackend\OlivarBackend\bin\Debug\net8.0\publish\OlivarBackend.runtimeconfig.json
+C:\Users\maria\source\repos\OlivarBackend\OlivarBackend\bin\Debug\net8.0\publish\OlivarBackend.staticwebassets.endpoints.json
