@@ -37,7 +37,8 @@ namespace OlivarBackend.Controllers
             usuario.TokenExpiracion = DateTime.UtcNow.AddMinutes(15);
             await _context.SaveChangesAsync();
 
-            string enlace = $"https://tusitio.com/restablecer?token={token}";
+            string enlace = $"https://olivar-front.onrender.com/reset-password?token={token}";
+
             string asunto = "Recuperación de contraseña - Olivar";
             string cuerpo = $@"
                 <h3>Hola {usuario.Nombre},</h3>
@@ -53,8 +54,8 @@ namespace OlivarBackend.Controllers
 
         private async Task EnviarCorreo(string destino, string asunto, string cuerpoHtml)
         {
-            var remitente = "tucorreo@gmail.com";     // <-- cambia esto
-            var clave = "tu-clave-de-aplicacion";     // <-- cambia esto también
+            var remitente = "mariadelpilartasaycolaque@gmail.com";     // <-- cambia esto
+            var clave = "lntv ywtr dwhi yqsi";     // <-- cambia esto también
 
             var smtp = new SmtpClient("smtp.gmail.com")
             {
