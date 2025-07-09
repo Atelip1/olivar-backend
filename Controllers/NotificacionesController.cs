@@ -17,7 +17,7 @@ namespace OlivarBackend.Controllers
             _context = context;
         }
 
-        // ✅ GET: api/Notificaciones
+        // GET: api/Notificaciones
         // Trae todas las notificaciones (útil para pruebas o admin)
         [HttpGet]
         public async Task<ActionResult<IEnumerable<NotificacionDto>>> GetNotificaciones()
@@ -37,7 +37,7 @@ namespace OlivarBackend.Controllers
             return Ok(notificaciones);
         }
 
-        // ✅ GET: api/Notificaciones/usuario/5
+        //GET: api/Notificaciones/usuario/5
         // Trae las notificaciones del usuario + globales (UsuarioId == null)
         [HttpGet("usuario/{usuarioId}")]
         public async Task<ActionResult<IEnumerable<NotificacionDto>>> GetNotificacionesPorUsuario(int usuarioId)
@@ -59,7 +59,7 @@ namespace OlivarBackend.Controllers
             return Ok(notificaciones);
         }
 
-        // ✅ GET: api/Notificaciones/5
+        // GET: api/Notificaciones/5
         [HttpGet("{id}")]
         public async Task<ActionResult<NotificacionDto>> GetNotificacion(int id)
         {
@@ -80,13 +80,13 @@ namespace OlivarBackend.Controllers
             return Ok(dto);
         }
 
-        // ✅ POST: api/Notificaciones
+        // POST: api/Notificaciones
         [HttpPost]
         public async Task<ActionResult<NotificacionDto>> PostNotificacion(NotificacionCreateDto dto)
         {
             var notificacion = new Notificacione
             {
-                UsuarioId = dto.UsuarioId,  // ← puede ser null ahora
+                UsuarioId = dto.UsuarioId,  
                 Titulo = dto.Titulo,
                 Mensaje = dto.Mensaje,
                 FechaEnvio = DateTime.Now,
@@ -109,7 +109,7 @@ namespace OlivarBackend.Controllers
             return CreatedAtAction(nameof(GetNotificacion), new { id = notificacion.NotificacionId }, resultDto);
         }
 
-        // ✅ PUT: api/Notificaciones/5/leer
+        //  PUT: api/Notificaciones/5/leer
         [HttpPut("{id}/leer")]
         public async Task<IActionResult> MarcarComoLeida(int id)
         {
@@ -123,7 +123,7 @@ namespace OlivarBackend.Controllers
             return NoContent();
         }
 
-        // ✅ DELETE: api/Notificaciones/5
+        // DELETE: api/Notificaciones/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteNotificacion(int id)
         {

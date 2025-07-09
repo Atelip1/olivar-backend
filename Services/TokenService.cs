@@ -21,10 +21,10 @@ namespace OlivarBackend.Services
         {
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, userId),        // Id del usuario
-                new Claim(JwtRegisteredClaimNames.Email, email),       // Email
-                new Claim(ClaimTypes.Role, role),                       // Rol
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Id único del token
+                new Claim(JwtRegisteredClaimNames.Sub, userId),        
+                new Claim(JwtRegisteredClaimNames.Email, email),       
+                new Claim(ClaimTypes.Role, role),                     
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) 
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));

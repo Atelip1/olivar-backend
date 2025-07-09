@@ -63,7 +63,7 @@ namespace OlivarBackend.Controllers
             var resultado = pedidos
                 .Select(p => new
                 {
-                    PedidoId = p.PedidoId,           // ← Usa el nombre real de tu modelo
+                    PedidoId = p.PedidoId,           
                     UsuarioId = p.UsuarioId,
                     Total = p.Total,
                     Fecha = p.Fecha,

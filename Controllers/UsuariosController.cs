@@ -23,7 +23,7 @@ namespace OlivarBackend.Controllers
             _tokenService = tokenService;
         }
 
-        // 🚫 Login
+        //  Login
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto request)
@@ -35,10 +35,10 @@ namespace OlivarBackend.Controllers
             if (usuario == null)
                 return Unauthorized(new { mensaje = "Usuario o contraseña incorrectos" });
 
-            // Hashear la contraseña ingresada
+          
             string hashedInput = HashPassword(request.Contrasena);
 
-            // Comparar hashes
+            
             if (usuario.Contrasena != hashedInput)
                 return Unauthorized(new { mensaje = "Usuario o contraseña incorrectos" });
 
@@ -61,7 +61,7 @@ namespace OlivarBackend.Controllers
             });
         }
 
-        // ✅ Recuperación de contraseña
+        //  Recuperación de contraseña
         [AllowAnonymous]
         [HttpPost("enviar-recuperacion")]
         public async Task<IActionResult> EnviarCorreoRecuperacion([FromBody] RecuperacionDto dto)
@@ -89,12 +89,12 @@ namespace OlivarBackend.Controllers
             return Ok(new { mensaje = "Instrucciones enviadas al correo." });
         }
 
-        // Método privado para enviar correo
+        
         private async Task EnviarCorreo(string destino, string asunto, string cuerpoHtml)
         {
            
-            var remitente = "mariadelpilartasaycolaque@gmail.com";         // <-- Usa el mismo correo que ya te funciona
-            var clave = "xjdp evhf oxjp veij";         // <-- Usa la clave válida del correo
+            var remitente = "mariadelpilartasaycolaque@gmail.com";         
+            var clave = "xjdp evhf oxjp veij";         
 
             var smtp = new SmtpClient("smtp.gmail.com")
             {
@@ -126,10 +126,10 @@ namespace OlivarBackend.Controllers
             if (usuario.TokenExpiracion == null || usuario.TokenExpiracion < DateTime.UtcNow)
                 return BadRequest(new { mensaje = "El token expiró." });
 
-            // Aquí deberías hashear la nueva contraseña antes de guardarla
+            
             usuario.Contrasena = HashPassword(dto.NuevaContrasena);
 
-            // Limpiar el token para que no se pueda reutilizar
+            
             usuario.TokenRecuperacion = null;
             usuario.TokenExpiracion = null;
 
@@ -138,10 +138,10 @@ namespace OlivarBackend.Controllers
             return Ok(new { mensaje = "Contraseña actualizada correctamente." });
         }
 
-        // Ejemplo simple de método para hashear contraseña, puedes usar cualquier método seguro (como BCrypt)
+   
         private string HashPassword(string password)
         {
-            // Esto es solo un ejemplo simple, no usar en producción sin un buen algoritmo de hash
+ 
             using var sha256 = System.Security.Cryptography.SHA256.Create();
             var bytes = System.Text.Encoding.UTF8.GetBytes(password);
             var hash = sha256.ComputeHash(bytes);
@@ -152,7 +152,7 @@ namespace OlivarBackend.Controllers
 
 
 
-        // ✅ Registro de usuario
+        // Registro de usuario
         [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<UsuarioDto>> PostUsuario([FromBody] UsuarioCrearDto dto)
@@ -209,7 +209,7 @@ namespace OlivarBackend.Controllers
         }
 
 
-        // 🔒 Obtener todos
+        //  Obtener todos
         [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UsuarioDto>>> GetUsuarios()
@@ -232,7 +232,7 @@ namespace OlivarBackend.Controllers
             return Ok(usuariosDto);
         }
 
-        // 🔒 Obtener por ID
+        //  Obtener por ID
         [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<UsuarioDto>> GetUsuarioById(int id)
@@ -260,7 +260,7 @@ namespace OlivarBackend.Controllers
             return Ok(usuarioDto);
         }
 
-        // 🔒 Editar
+        //  Editar
         [AllowAnonymous]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUsuario(int id, Usuario usuario)
@@ -285,7 +285,7 @@ namespace OlivarBackend.Controllers
             return NoContent();
         }
 
-        // 🔒 Eliminar
+        //  Eliminar
         [AllowAnonymous]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUsuario(int id)

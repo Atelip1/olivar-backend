@@ -13,6 +13,6 @@
         public decimal Total { get; set; }
         public int? SucursalId { get; set; }
 
-        public string? NombreUsuario { get; set; } // Solo lectura
+        public string? NombreUsuario { get; set; } 
     }
 }

@@ -1,4 +1,4 @@
-﻿// DTO para mostrar consulta
+﻿
 public class ConsultaDetailDto
 {
     public int ConsultaId { get; set; }

@@ -4,10 +4,10 @@ using OlivarBackend.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using OlivarBackend.Services;
-using OlivarBackend.Config; // <- Asegúrate de tener tu clase JwtSettings aquí
+using OlivarBackend.Config; 
 using System.Text;
-using PdfSharpCore.Fonts;       // Para usar GlobalFontSettings
-using OlivarBackend.Services;  // Donde está tu CustomFontResolver
+using PdfSharpCore.Fonts;       
+using OlivarBackend.Services;  
 
 
 
@@ -15,11 +15,11 @@ using OlivarBackend.Services;  // Donde está tu CustomFontResolver
 var builder = WebApplication.CreateBuilder(args);
 GlobalFontSettings.FontResolver = new CustomFontResolver();
 
-// 🔐 JWT
+// JWT
 var jwtSection = builder.Configuration.GetSection("JwtSettings");
-builder.Services.Configure<JwtSettings>(jwtSection); // Permite inyectar JwtSettings en TokenService
+builder.Services.Configure<JwtSettings>(jwtSection); 
 
-var jwtSettings = jwtSection.Get<JwtSettings>(); // ✅ Obtiene los valores reales
+var jwtSettings = jwtSection.Get<JwtSettings>(); 
 
 builder.Services.AddAuthentication(options =>
 {
@@ -43,10 +43,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// ✅ Registrar servicios personalizados
+// Registrar servicios personalizados
 builder.Services.AddScoped<TokenService>();
 
-// 🔧 Agregar servicios de controladores y Swagger
+// Agregar servicios de controladores y Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -54,7 +54,7 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Olivar API", Version = "v1" });
 });
 
-// 🔗 CORS
+//  CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -65,18 +65,18 @@ builder.Services.AddCors(options =>
     });
 });
 
-// 🔌 DbContext
+//  DbContext
 builder.Services.AddDbContext<RestauranteDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
 var app = builder.Build();
 
-// ✅ Establecer puerto en Render
+// Establecer puerto en Render
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 app.Urls.Add($"http://*:{port}");
 
-// ✅ Verificar conexión a BD
+//  Verificar conexión a BD
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<RestauranteDbContext>();
@@ -110,7 +110,7 @@ else
     app.UseDeveloperExceptionPage();
 }
 
-// ⚠️ HTTPS solo en desarrollo
+// ⚠ HTTPS solo en desarrollo
 if (!app.Environment.IsProduction())
 {
     app.UseHttpsRedirection();
@@ -118,7 +118,7 @@ if (!app.Environment.IsProduction())
 
 app.UseStaticFiles();
 app.UseCors("AllowAll");
-app.UseAuthentication(); // ✅ JWT
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapControllers();

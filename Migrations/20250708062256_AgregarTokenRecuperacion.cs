@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace OlivarBackend.Migrations
 {
-    /// <inheritdoc />
+    
     public partial class AgregarTokenRecuperacion : Migration
     {
-        /// <inheritdoc />
+        
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(

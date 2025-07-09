@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace OlivarBackend.Migrations
 {
-    /// <inheritdoc />
+    
     public partial class AgregarTablaEgresos : Migration
     {
-        /// <inheritdoc />
+        
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<decimal>(
@@ -37,7 +37,7 @@ namespace OlivarBackend.Migrations
                 oldMaxLength: 255);
         }
 
-        /// <inheritdoc />
+      
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<decimal>(

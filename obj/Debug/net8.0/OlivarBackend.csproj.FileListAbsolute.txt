@@ -195,3 +195,4 @@ C:\Users\maria\source\repos\OlivarBackend\OlivarBackend\bin\Debug\net8.0\publish
 C:\Users\maria\source\repos\OlivarBackend\OlivarBackend\bin\Debug\net8.0\publish\OlivarBackend.deps.json
 C:\Users\maria\source\repos\OlivarBackend\OlivarBackend\bin\Debug\net8.0\publish\OlivarBackend.runtimeconfig.json
 C:\Users\maria\source\repos\OlivarBackend\OlivarBackend\bin\Debug\net8.0\publish\OlivarBackend.staticwebassets.endpoints.json
+C:\Users\maria\source\repos\OlivarBackend\OlivarBackend\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

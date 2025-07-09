@@ -703,6 +703,32 @@
     ]
   },
   {
+    "ContainingType": "OlivarBackend.Controllers.DetallePedidosController",
+    "Method": "GetPorPedido",
+    "RelativePath": "api/DetallePedidos/por-pedido/{pedidoId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pedidoId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[OlivarBackend.DTOs.DetallePedidoDto, OlivarBackend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "OlivarBackend.Controllers.DireccionesEntregaController",
     "Method": "GetDirecciones",
     "RelativePath": "api/DireccionesEntrega",
@@ -806,6 +832,54 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OlivarBackend.Controllers.EgresosController",
+    "Method": "CrearEgreso",
+    "RelativePath": "api/Egresos",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "egreso",
+        "Type": "OlivarBackend.Models.Egreso",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OlivarBackend.Controllers.EgresosController",
+    "Method": "GetEgresosPorDia",
+    "RelativePath": "api/Egresos/dia/{fecha}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fecha",
+        "Type": "System.DateTime",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OlivarBackend.Controllers.EmailController",
+    "Method": "EnviarFactura",
+    "RelativePath": "api/Email/enviar-factura",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "OlivarBackend.Dto.EmailFacturaDto",
         "IsRequired": true
       }
     ],
@@ -1705,6 +1779,53 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "OlivarBackend.Controllers.ReportesController",
+    "Method": "ObtenerIngresosPorDia",
+    "RelativePath": "api/Reportes/ingresos-dia/{fecha}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fecha",
+        "Type": "System.DateTime",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "OlivarBackend.Controllers.ReportesController\u002BIngresoDiarioDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "OlivarBackend.Controllers.ReportesController",
+    "Method": "PedidosDelDia",
+    "RelativePath": "api/Reportes/pedidos-dia",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fecha",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "estado",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "OlivarBackend.Controllers.ReservasController",
     "Method": "GetReservas",
     "RelativePath": "api/Reservas",
@@ -2235,6 +2356,22 @@
   },
   {
     "ContainingType": "OlivarBackend.Controllers.UsuariosController",
+    "Method": "EnviarCorreoRecuperacion",
+    "RelativePath": "api/Usuarios/enviar-recuperacion",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "OlivarBackend.DTOs.RecuperacionDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OlivarBackend.Controllers.UsuariosController",
     "Method": "Login",
     "RelativePath": "api/Usuarios/login",
     "HttpMethod": "POST",
@@ -2244,6 +2381,22 @@
       {
         "Name": "request",
         "Type": "OlivarBackend.DTOs.LoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OlivarBackend.Controllers.UsuariosController",
+    "Method": "RestablecerPassword",
+    "RelativePath": "api/Usuarios/restablecer-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "OlivarBackend.Controllers.UsuariosController\u002BRestablecerPasswordDto",
         "IsRequired": true
       }
     ],

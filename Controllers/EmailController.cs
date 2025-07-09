@@ -20,7 +20,7 @@ namespace OlivarBackend.Controllers
 
                 var smtp = new SmtpClient("smtp.gmail.com", 587)
                 {
-                    Credentials = new NetworkCredential("mariadelpilartasaycolaque@gmail.com", "xjdp evhf oxjp veij"), // Usa tu clave de aplicación Gmail
+                    Credentials = new NetworkCredential("mariadelpilartasaycolaque@gmail.com", "xjdp evhf oxjp veij"),
                     EnableSsl = true
                 };
 

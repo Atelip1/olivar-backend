@@ -16,14 +16,14 @@ namespace OlivarBackend.Controllers
             _context = context;
         }
 
-        // ✅ Obtener todas las categorías
+        //  Obtener todas las categorías
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Categoria>>> GetCategorias()
         {
             return await _context.Categorias.ToListAsync();
         }
 
-        // ✅ Obtener una categoría por ID
+        //  Obtener una categoría por ID
         [HttpGet("{id}")]
         public async Task<ActionResult<Categoria>> GetCategoria(int id)
         {
@@ -35,7 +35,7 @@ namespace OlivarBackend.Controllers
             return categoria;
         }
 
-        // ✅ Crear nueva categoría
+        //  Crear nueva categoría
         [HttpPost]
         public async Task<ActionResult<Categoria>> PostCategoria(Categoria categoria)
         {
@@ -45,7 +45,7 @@ namespace OlivarBackend.Controllers
             return CreatedAtAction(nameof(GetCategoria), new { id = categoria.CategoriaId }, categoria);
         }
 
-        // ✅ Actualizar una categoría
+        //  Actualizar una categoría
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategoria(int id, Categoria categoria)
         {
@@ -69,7 +69,7 @@ namespace OlivarBackend.Controllers
             return NoContent();
         }
 
-        // ✅ Eliminar categoría
+        //  Eliminar categoría
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategoria(int id)
         {

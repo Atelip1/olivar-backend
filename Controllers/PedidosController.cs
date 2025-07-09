@@ -17,7 +17,7 @@ namespace OlivarBackend.Controllers
             _context = context;
         }
 
-        // ✅ GET: /api/Pedidos
+        //  GET: /api/Pedidos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PedidoDto>>> GetPedidos()
         {
@@ -42,7 +42,7 @@ namespace OlivarBackend.Controllers
             return Ok(pedidos);
         }
 
-        // ✅ GET: /api/Pedidos/{id}
+        //  GET: /api/Pedidos/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<PedidoDto>> GetPedido(int id)
         {
@@ -71,7 +71,7 @@ namespace OlivarBackend.Controllers
             return Ok(pedido);
         }
 
-        // ✅ POST: /api/Pedidos
+        //  POST: /api/Pedidos
         [HttpPost]
         public async Task<ActionResult<PedidoDto>> PostPedido(PedidoDto dto)
         {
@@ -97,7 +97,7 @@ namespace OlivarBackend.Controllers
             return CreatedAtAction(nameof(GetPedido), new { id = pedido.PedidoId }, dto);
         }
 
-        // ✅ PUT: /api/Pedidos/{id}
+        //  PUT: /api/Pedidos/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPedido(int id, PedidoDto dto)
         {
@@ -124,7 +124,7 @@ namespace OlivarBackend.Controllers
             return NoContent();
         }
 
-        // ✅ DELETE: /api/Pedidos/{id}
+        // DELETE: /api/Pedidos/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePedido(int id)
         {
@@ -137,7 +137,7 @@ namespace OlivarBackend.Controllers
 
             return NoContent();
         }
-        // ✅ GET: /api/Pedidos/usuario/{usuarioId}
+        // GET: /api/Pedidos/usuario/{usuarioId}
         [HttpGet("usuario/{usuarioId}")]
         public async Task<ActionResult<IEnumerable<PedidoDto>>> GetPedidosPorUsuario(int usuarioId)
         {

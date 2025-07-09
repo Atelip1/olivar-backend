@@ -8,7 +8,7 @@ namespace OlivarBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    // [Authorize]  <-- Línea comentada para que NO requiera token
+    
     public class ProductosController : ControllerBase
     {
         private readonly RestauranteDbContext _context;
@@ -117,10 +117,12 @@ namespace OlivarBackend.Controllers
             if (producto == null)
                 return NotFound();
 
-            _context.Productos.Remove(producto);
+            producto.Estado = false; // ✅ eliminación lógica
+            _context.Entry(producto).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
+
     }
 }

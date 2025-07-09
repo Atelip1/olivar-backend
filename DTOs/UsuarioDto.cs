@@ -12,8 +12,6 @@
         public int? RolId { get; set; }
         public string? RolNombre { get; set; }
 
-        public string? TokenRecuperacion { get; set; }
-        public DateTime? TokenExpiracion { get; set; }
 
     }
 }
