@@ -339,7 +339,8 @@ public partial class RestauranteDbContext : DbContext
 
             entity.HasOne(d => d.Categoria).WithMany(p => p.Productos)
                 .HasForeignKey(d => d.CategoriaId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Restrict)
+
                 .HasConstraintName("FK__Productos__Categ__47DBAE45");
         });
 

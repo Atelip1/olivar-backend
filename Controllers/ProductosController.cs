@@ -117,12 +117,14 @@ namespace OlivarBackend.Controllers
             if (producto == null)
                 return NotFound();
 
-            producto.Estado = false; // ✅ eliminación lógica
+            // Borrado lógico
+            producto.Estado = false;
             _context.Entry(producto).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
+
 
     }
 }
