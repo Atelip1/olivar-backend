@@ -23,6 +23,7 @@ namespace OlivarBackend.Controllers
         {
             var productos = await _context.Productos
                 .Include(p => p.Categoria)
+                .Where(p => p.Estado == true) // Solo activos
                 .Select(p => new ProductoDto
                 {
                     ProductoId = p.ProductoId,
@@ -38,6 +39,7 @@ namespace OlivarBackend.Controllers
 
             return Ok(productos);
         }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductoDto>> GetProducto(int id)
@@ -117,14 +119,12 @@ namespace OlivarBackend.Controllers
             if (producto == null)
                 return NotFound();
 
-            // Borrado lógico
-            producto.Estado = false;
+            producto.Estado = false; // Eliminación lógica
             _context.Entry(producto).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
-
 
     }
 }
